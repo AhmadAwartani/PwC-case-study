@@ -1,0 +1,95 @@
+// Prisma schema for the Support Helpdesk Ticketing System (Phase 1)
+// Datasource: SQLite (file-based, zero external setup)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+ 
+// ---------------------------------------------------------------------------
+// User
+// Role is a plain String constrained to "user" | "moderator" | "admin".
+// SQLite has no native enum type, so Prisma enums would still be stored as
+// TEXT under the hood -- we validate the allowed values at the Zod layer
+// instead and keep the column as String for simplicity and portability.
+// ---------------------------------------------------------------------------
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("user") // "user" | "moderator" | "admin"
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  ticketsRequested Ticket[]        @relation("TicketRequester")
+  ticketsAssigned  Ticket[]        @relation("TicketAssignee")
+  comments         TicketComment[]
+
+  @@index([role])
+}
+
+// ---------------------------------------------------------------------------
+// Category
+// ---------------------------------------------------------------------------
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  tickets Ticket[]
+}
+
+// ---------------------------------------------------------------------------
+// Ticket
+// status: "open" | "in_progress" | "resolved" | "closed"
+// priority: "low" | "medium" | "high" | "urgent"
+// ---------------------------------------------------------------------------
+model Ticket {
+  id          String   @id @default(uuid())
+  subject     String
+  description String
+  status      String   @default("open")
+  priority    String   @default("medium")
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  requesterId String
+  requester   User   @relation("TicketRequester", fields: [requesterId], references: [id])
+
+  assigneeId String?
+  assignee   User?   @relation("TicketAssignee", fields: [assigneeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments TicketComment[]
+
+  // Indexes to support Phase 2's filtering/sorting on the ticket queue.
+  @@index([status])
+  @@index([priority])
+  @@index([categoryId])
+  @@index([requesterId])
+  @@index([assigneeId])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// TicketComment
+// Flat (non-threaded) reply/activity history on a ticket.
+// ---------------------------------------------------------------------------
+model TicketComment {
+  id        String   @id @default(uuid())
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+}

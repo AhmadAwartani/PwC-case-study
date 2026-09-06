@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+/* this is used for Dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Core palette -- cool near-white surface, ink-navy primary, muted
+     semantic status colors. Kept deliberately restrained: one accent,
+     everything else neutral. */
+  --color-canvas: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-border: #e2e5ea;
+  --color-ink: #1c222b;
+  --color-ink-soft: #5b6472;
+  --color-primary: #1f3a5f;
+  --color-primary-hover: #16293f;
+  --color-primary-soft: #eaf0f7;
+
+  --color-status-open: #5b6472;
+  --color-status-open-bg: #eef0f3;
+  --color-status-progress: #1f6feb;
+  --color-status-progress-bg: #e8f0fe;
+  --color-status-resolved: #1a7f5a;
+  --color-status-resolved-bg: #e5f5ee;
+  --color-status-closed: #8a8f98;
+  --color-status-closed-bg: #eef0f2;
+
+  --color-priority-low: #5b6472;
+  --color-priority-medium: #1f6feb;
+  --color-priority-high: #b76e00;
+  --color-priority-urgent: #b3261e;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
+/* For dark mode  */
+.dark {
+  --color-canvas: #14171c;
+  --color-surface: #1b1f26;
+  --color-border: #2a2f38;
+  --color-ink: #e7e9ec;
+  --color-ink-soft: #9aa2ad;
+  --color-primary: #6f9bce;
+  --color-primary-hover: #8db2da;
+  --color-primary-soft: #1e2a3a;
+
+  --color-status-open: #9aa2ad;
+  --color-status-open-bg: #22262e;
+  --color-status-progress: #6f9bce;
+  --color-status-progress-bg: #1c2a3d;
+  --color-status-resolved: #4fbd8e;
+  --color-status-resolved-bg: #14261f;
+  --color-status-closed: #7a8089;
+  --color-status-closed-bg: #22262a;
+
+  --color-priority-low: #9aa2ad;
+  --color-priority-medium: #6f9bce;
+  --color-priority-high: #e0a53d;
+  --color-priority-urgent: #f0645c;
+}
+
+.dark select {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--color-border);
+}
+
+.dark select option {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.dark select option:checked,
+.dark select option:hover {
+  background-color: var(--color-primary-soft);
+  color: var(--color-ink);
+}
